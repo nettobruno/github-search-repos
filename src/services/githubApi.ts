@@ -1,9 +1,10 @@
 import axios from 'axios'
+import { env } from '../config/env'
 
 export const githubApi = axios.create({
-  baseURL: import.meta.env.VITE_GITHUB_API_URL,
+  baseURL: env.githubApiUrl,
   headers: {
     Accept: 'application/vnd.github+json',
-    Authorization: `Bearer ${import.meta.env.VITE_GITHUB_TOKEN}`,
+    Authorization: env.githubToken ? `Bearer ${env.githubToken}` : undefined,
   },
 })
