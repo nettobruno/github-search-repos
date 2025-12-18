@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Search } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { ToastContainer, toast } from 'react-toastify'
 
 import { Button } from './components/Button/Button'
@@ -8,6 +8,7 @@ import { ItemList } from './components/ItemList/ItemList'
 import { ViewDetails } from './components/ViewDetails/ViewDetails'
 
 import { useGithubRepositories } from './hooks/useGithubRepositories'
+import { useMediaQuery } from './hooks/useMediaQuery'
 import styles from './App.module.css'
 
 /**
@@ -17,6 +18,9 @@ import styles from './App.module.css'
  * managing selected repository state and rendering the main layout.
  */
 function App() {
+  // Detects if the current viewport matches a mobile breakpoint
+  const isMobile = useMediaQuery('(max-width: 768px)')
+
   // Stores the current search query typed by the user
   const [search, setSearch] = useState('')
 
@@ -33,6 +37,10 @@ function App() {
   const selectedRepository = repositories.find(
     (repo) => repo.id === selectedRepositoryId,
   )
+
+  // Determines whether the repository details modal should be visible on mobile
+  // The modal is shown when a repository is selected and the viewport is mobile
+  const isDetailsOpen = isMobile && selectedRepositoryId !== null
 
   /**
    * Displays error messages using toast notifications
@@ -100,30 +108,69 @@ function App() {
 
           {/* Repository details section */}
           <div>
-            <h2 className={styles.titleSection}>Detalhes</h2>
+            {!isMobile && (
+              <>
+                <h2 className={styles.titleSection}>Detalhes</h2>
 
-            <div className={styles.sticky}>
-              {selectedRepository ? (
-                <ViewDetails
-                  image={selectedRepository.owner.avatar_url}
-                  title={selectedRepository.name}
-                  fullName={selectedRepository.full_name}
-                  description={
-                    selectedRepository.description ??
-                    'Sem descrição disponível.'
-                  }
-                  language={selectedRepository.language ?? 'Não especificada'}
-                  stars={selectedRepository.stargazers_count}
-                  forks={selectedRepository.forks_count}
-                  lastUpdate={selectedRepository.updated_at}
-                  repositoryUrl={selectedRepository.html_url}
-                />
-              ) : (
-                <div className={styles.empty}>
-                  Selecione um repositório para ver os detalhes
+                <div className={styles.sticky}>
+                  {selectedRepository ? (
+                    <ViewDetails
+                      image={selectedRepository.owner.avatar_url}
+                      title={selectedRepository.name}
+                      fullName={selectedRepository.full_name}
+                      description={
+                        selectedRepository.description ??
+                        'Sem descrição disponível.'
+                      }
+                      language={
+                        selectedRepository.language ?? 'Não especificada'
+                      }
+                      stars={selectedRepository.stargazers_count}
+                      forks={selectedRepository.forks_count}
+                      lastUpdate={selectedRepository.updated_at}
+                      repositoryUrl={selectedRepository.html_url}
+                    />
+                  ) : (
+                    <div className={styles.empty}>
+                      Selecione um repositório para ver os detalhes
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
+              </>
+            )}
+
+            {/*
+              On mobile devices, repository details are displayed inside a modal
+              to ensure immediate visual feedback after selecting an item from the list.
+            */}
+            {isMobile && isDetailsOpen && selectedRepository && (
+              <div className={styles.modalOverlay}>
+                <div className={styles.modal}>
+                  <button
+                    className={styles.closeButton}
+                    onClick={() => setSelectedRepositoryId(null)}
+                    aria-label="Close details"
+                  >
+                    <X size={24} />
+                  </button>
+
+                  <ViewDetails
+                    image={selectedRepository.owner.avatar_url}
+                    title={selectedRepository.name}
+                    fullName={selectedRepository.full_name}
+                    description={
+                      selectedRepository.description ??
+                      'Sem descrição disponível.'
+                    }
+                    language={selectedRepository.language ?? 'Não especificada'}
+                    stars={selectedRepository.stargazers_count}
+                    forks={selectedRepository.forks_count}
+                    lastUpdate={selectedRepository.updated_at}
+                    repositoryUrl={selectedRepository.html_url}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
