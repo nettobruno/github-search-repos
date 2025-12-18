@@ -1,9 +1,9 @@
 import type { ButtonProps } from './Button.types'
 import styles from './Button.module.css'
 
-export function Button({ children, ...props }: ButtonProps) {
+export function Button({ children, isFull = false, ...props }: ButtonProps) {
   return (
-    <button className={styles.button} {...props}>
+    <button className={`${styles.button} ${isFull ? styles.full : ''}`} {...props}>
       {children}
     </button>
   )

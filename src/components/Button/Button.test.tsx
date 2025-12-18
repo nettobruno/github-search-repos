@@ -19,6 +19,14 @@ describe('Button', () => {
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
+  it('should apply full width class when isFull is true', () => {
+    render(<Button isFull>Full button</Button>)
+
+    const button = screen.getByRole('button')
+
+    expect(button.className).toMatch(/full/)
+  })
+
   it('can be disabled', () => {
     render(<Button disabled>Disabled</Button>)
 
