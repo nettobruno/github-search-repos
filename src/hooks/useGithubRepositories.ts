@@ -38,6 +38,11 @@ export function useGithubRepositories({ query }: UseGithubRepositoriesParams) {
           },
         })
 
+        if (response.data.items.length === 0) {
+          setError('Nenhum repositório encontrado para a busca informada. Tente uma busca diferente.')
+          return
+        }
+
         setRepositories((prev) =>
           reset ? response.data.items : [...prev, ...response.data.items],
         )
@@ -45,23 +50,25 @@ export function useGithubRepositories({ query }: UseGithubRepositoriesParams) {
         setPage(pageToFetch + 1)
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
-          if (axios.isCancel(err)) return
+          if (err.name === 'CanceledError') return
 
-          if (err.status === 401) {
+          const status = err.response?.status
+
+          if (status === 401) {
             setError(
               'Falha de autenticação com a API do GitHub. Verifique o token.',
             )
             return
           }
 
-          if (err.status === 403) {
+          if (status === 403) {
             setError(
               'Acesso negado ou limite de requisições do GitHub atingido.',
             )
             return
           }
 
-          if (err.status === 422) {
+          if (status === 422) {
             setError('A busca informada é inválida.')
             return
           }
