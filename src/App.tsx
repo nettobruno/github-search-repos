@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Search } from 'lucide-react'
+import { ToastContainer, toast } from 'react-toastify'
 
 import { Button } from './components/Button/Button'
 import { Input } from './components/Input/Input'
@@ -22,85 +23,94 @@ function App() {
     (repo) => repo.id === selectedRepositoryId,
   )
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error)
+    }
+  }, [error])
+
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>Explore repositórios no GitHub</h1>
+    <>
+      <div className={styles.container}>
+        <h1 className={styles.title}>Explore repositórios no GitHub</h1>
 
-      <div className={styles.search}>
-        <Input
-          icon={Search}
-          placeholder="Pesquisar repositórios..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        <Button onClick={searchRepositories} disabled={!search || loading}>
-          Buscar
-        </Button>
-      </div>
+        <div className={styles.search}>
+          <Input
+            icon={Search}
+            placeholder="Pesquisar repositórios..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Button onClick={searchRepositories} disabled={!search || loading}>
+            Buscar
+          </Button>
+        </div>
 
-      {error && <p>{error}</p>}
+        <div className={styles.grid}>
+          <div>
+            <h2 className={styles.titleSection}>Repositórios</h2>
 
-      <div className={styles.grid}>
-        <div>
-          <h2 className={styles.titleSection}>Repositórios</h2>
-
-          <div className={styles.list}>
-            {repositories.length > 0 ? (
-              repositories.map((repo) => (
-                <ItemList
-                  key={repo.id}
-                  image={repo.owner.avatar_url}
-                  title={repo.name}
-                  fullName={repo.full_name}
-                  language={repo.language ?? 'Não especificada'}
-                  stars={repo.stargazers_count}
-                  isSelected={selectedRepositoryId === repo.id}
-                  onClick={() => setSelectedRepositoryId(repo.id)}
-                />
-              ))
-            ) : (
-              <div className={styles.empty}>
-                Digite um termo e clique em buscar para listar repositórios
-              </div>
-            )}
-          </div>
-
-          {repositories.length > 0 && (
-            <div className={styles.loadMore}>
-              <Button isFull onClick={fetchMore} disabled={loading}>
-                {loading ? 'Carregando...' : 'Carregar mais'}
-              </Button>
+            <div className={styles.list}>
+              {repositories.length > 0 ? (
+                repositories.map((repo) => (
+                  <ItemList
+                    key={repo.id}
+                    image={repo.owner.avatar_url}
+                    title={repo.name}
+                    fullName={repo.full_name}
+                    language={repo.language ?? 'Não especificada'}
+                    stars={repo.stargazers_count}
+                    isSelected={selectedRepositoryId === repo.id}
+                    onClick={() => setSelectedRepositoryId(repo.id)}
+                  />
+                ))
+              ) : (
+                <div className={styles.empty}>
+                  Digite um termo e clique em buscar para listar repositórios
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        <div>
-          <h2 className={styles.titleSection}>Detalhes</h2>
-
-          <div className={styles.sticky}>
-            {selectedRepository ? (
-              <ViewDetails
-                image={selectedRepository.owner.avatar_url}
-                title={selectedRepository.name}
-                fullName={selectedRepository.full_name}
-                description={
-                  selectedRepository.description ?? 'Sem descrição disponível.'
-                }
-                language={selectedRepository.language ?? 'Não especificada'}
-                stars={selectedRepository.stargazers_count}
-                forks={selectedRepository.forks_count}
-                lastUpdate={selectedRepository.updated_at}
-                repositoryUrl={selectedRepository.html_url}
-              />
-            ) : (
-              <div className={styles.empty}>
-                Selecione um repositório para ver os detalhes
+            {repositories.length > 0 && (
+              <div className={styles.loadMore}>
+                <Button isFull onClick={fetchMore} disabled={loading}>
+                  {loading ? 'Carregando...' : 'Carregar mais'}
+                </Button>
               </div>
             )}
           </div>
+
+          <div>
+            <h2 className={styles.titleSection}>Detalhes</h2>
+
+            <div className={styles.sticky}>
+              {selectedRepository ? (
+                <ViewDetails
+                  image={selectedRepository.owner.avatar_url}
+                  title={selectedRepository.name}
+                  fullName={selectedRepository.full_name}
+                  description={
+                    selectedRepository.description ??
+                    'Sem descrição disponível.'
+                  }
+                  language={selectedRepository.language ?? 'Não especificada'}
+                  stars={selectedRepository.stargazers_count}
+                  forks={selectedRepository.forks_count}
+                  lastUpdate={selectedRepository.updated_at}
+                  repositoryUrl={selectedRepository.html_url}
+                />
+              ) : (
+                <div className={styles.empty}>
+                  Selecione um repositório para ver os detalhes
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      <ToastContainer />
+    </>
   )
 }
 
