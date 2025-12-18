@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import axios from 'axios'
 import { githubApi } from '../services/githubApi'
 import type { GithubRepository } from '../types/github'
@@ -13,15 +13,22 @@ export function useGithubRepositories({ query }: UseGithubRepositoriesParams) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const abortControllerRef = useRef<AbortController | null>(null)
+
   const fetchRepositories = useCallback(
     async (pageToFetch: number, reset = false) => {
-      if (!query || loading) return
+      if (!query) return
+
+      abortControllerRef.current?.abort()
+      const controller = new AbortController()
+      abortControllerRef.current = controller
 
       try {
         setLoading(true)
         setError(null)
 
         const response = await githubApi.get('/search/repositories', {
+          signal: controller.signal,
           params: {
             q: query,
             sort: 'stars',
@@ -38,19 +45,28 @@ export function useGithubRepositories({ query }: UseGithubRepositoriesParams) {
         setPage(pageToFetch + 1)
       } catch (err: unknown) {
         if (axios.isAxiosError(err)) {
+          if (axios.isCancel(err)) return
+
           if (err.status === 401) {
             setError(
-              'Não foi possível autenticar na API do GitHub. Verifique se o token de acesso está configurado corretamente.',
+              'Falha de autenticação com a API do GitHub. Verifique o token.',
             )
             return
           }
 
           if (err.status === 403) {
-            setError('Limite de requisições do GitHub atingido')
+            setError(
+              'Acesso negado ou limite de requisições do GitHub atingido.',
+            )
             return
           }
 
-          setError(err.message ?? 'Erro ao buscar repositórios. Tente novamente mais tarde.')
+          if (err.status === 422) {
+            setError('A busca informada é inválida.')
+            return
+          }
+
+          setError('Erro ao buscar repositórios. Tente novamente mais tarde.')
         } else {
           setError('Erro inesperado. Tente novamente mais tarde.')
         }
@@ -58,7 +74,7 @@ export function useGithubRepositories({ query }: UseGithubRepositoriesParams) {
         setLoading(false)
       }
     },
-    [query, loading],
+    [query],
   )
 
   const searchRepositories = useCallback(() => {
