@@ -1,6 +1,13 @@
 import type { ItemListProps } from './ItemList.types'
 import styles from './ItemList.module.css'
 
+/**
+ * ItemList component.
+ *
+ * Displays a summary of a GitHub repository including image,
+ * title, metadata and selection state. Designed to be used
+ * as a clickable item inside a list.
+ */
 export function ItemList({
   image,
   title,

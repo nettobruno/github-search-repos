@@ -1,6 +1,12 @@
 import type { ButtonProps } from './Button.types'
 import styles from './Button.module.css'
 
+/**
+ * Reusable polymorphic Button component.
+ *
+ * Supports rendering different HTML elements (e.g. button or anchor)
+ * while handling accessibility concerns and disabled behavior consistently.
+ */
 export function Button<E extends React.ElementType = 'button'>({
   as,
   children,
@@ -8,9 +14,16 @@ export function Button<E extends React.ElementType = 'button'>({
   disabled = false,
   ...props
 }: ButtonProps<E>) {
+  // Determines which element should be rendered
   const PolymorphicComponent = as || 'button'
   const isLink = PolymorphicComponent === 'a'
 
+  /**
+   * Accessibility handling:
+   * - Anchors do not support the disabled attribute
+   * - When rendered as a link, disabled state is simulated
+   *   using aria-disabled, tabIndex and click prevention
+   */
   const accessibilityProps = isLink
     ? {
         'aria-disabled': disabled,

@@ -1,3 +1,9 @@
+/**
+ * Shared types for the Button component.
+ *
+ * Defines a polymorphic button interface that allows rendering
+ * different HTML elements while preserving proper typing.
+ */
 import type { ReactNode, ElementType, ComponentProps } from 'react'
 
 export type PolymorphicProps<E extends ElementType> = {
@@ -11,5 +17,5 @@ export type ButtonBaseProps = {
   isFull?: boolean
 }
 
-export type ButtonProps<E extends ElementType = 'button'> =
-  ButtonBaseProps & PolymorphicProps<E>
+export type ButtonProps<E extends ElementType = 'button'> = ButtonBaseProps &
+  PolymorphicProps<E>

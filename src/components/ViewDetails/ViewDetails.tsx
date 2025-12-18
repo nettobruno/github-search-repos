@@ -3,6 +3,13 @@ import styles from './ViewDetails.module.css'
 import { Star, GitFork } from 'lucide-react'
 import { Button } from '../Button/Button'
 
+/**
+ * ViewDetails component.
+ *
+ * Displays detailed information about a GitHub repository,
+ * including metadata, statistics and a direct link to the
+ * repository page.
+ */
 export function ViewDetails({
   image,
   title,

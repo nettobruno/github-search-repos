@@ -10,19 +10,34 @@ import { ViewDetails } from './components/ViewDetails/ViewDetails'
 import { useGithubRepositories } from './hooks/useGithubRepositories'
 import styles from './App.module.css'
 
+/**
+ * Main application component.
+ *
+ * Responsible for handling user interactions, coordinating data fetching,
+ * managing selected repository state and rendering the main layout.
+ */
 function App() {
+  // Stores the current search query typed by the user
   const [search, setSearch] = useState('')
+
+  // Stores the ID of the currently selected repository
   const [selectedRepositoryId, setSelectedRepositoryId] = useState<
     number | null
   >(null)
 
+  // Custom hook that handles GitHub repository fetching logic
   const { repositories, loading, error, searchRepositories, fetchMore } =
     useGithubRepositories({ query: search })
 
+  // Finds the currently selected repository based on its ID
   const selectedRepository = repositories.find(
     (repo) => repo.id === selectedRepositoryId,
   )
 
+  /**
+   * Displays error messages using toast notifications
+   * whenever an error is returned from the data fetching hook.
+   */
   useEffect(() => {
     if (error) {
       toast.error(error)
@@ -34,6 +49,7 @@ function App() {
       <div className={styles.container}>
         <h1 className={styles.title}>Explore repositórios no GitHub</h1>
 
+        {/* Search input and action button */}
         <div className={styles.search}>
           <Input
             icon={Search}
@@ -47,6 +63,7 @@ function App() {
         </div>
 
         <div className={styles.grid}>
+          {/* Repositories list section */}
           <div>
             <h2 className={styles.titleSection}>Repositórios</h2>
 
@@ -71,6 +88,7 @@ function App() {
               )}
             </div>
 
+            {/* Load more button for pagination */}
             {repositories.length > 0 && (
               <div className={styles.loadMore}>
                 <Button isFull onClick={fetchMore} disabled={loading}>
@@ -80,6 +98,7 @@ function App() {
             )}
           </div>
 
+          {/* Repository details section */}
           <div>
             <h2 className={styles.titleSection}>Detalhes</h2>
 
@@ -109,6 +128,7 @@ function App() {
         </div>
       </div>
 
+      {/* Toast container used to display feedback messages */}
       <ToastContainer />
     </>
   )

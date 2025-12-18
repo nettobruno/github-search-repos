@@ -1,3 +1,9 @@
+/**
+ * Props for the ViewDetails component.
+ *
+ * Represents the data required to display detailed
+ * information about a GitHub repository.
+ */
 export interface ViewDetailsProps {
   image: string
   title: string
