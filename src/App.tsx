@@ -24,7 +24,7 @@ function App() {
 
   return (
     <div className={styles.container}>
-      <h1>GitHub Repositories Explorer</h1>
+      <h1 className={styles.title}>Explore repositórios no GitHub</h1>
 
       <div className={styles.search}>
         <Input
@@ -42,21 +42,27 @@ function App() {
 
       <div className={styles.grid}>
         <div>
-          <h2>Repositórios</h2>
+          <h2 className={styles.titleSection}>Repositórios</h2>
 
           <div className={styles.list}>
-            {repositories.map((repo) => (
-              <ItemList
-                key={repo.id}
-                image={repo.owner.avatar_url}
-                title={repo.name}
-                fullName={repo.full_name}
-                language={repo.language ?? 'Não especificada'}
-                stars={repo.stargazers_count}
-                isSelected={selectedRepositoryId === repo.id}
-                onClick={() => setSelectedRepositoryId(repo.id)}
-              />
-            ))}
+            {repositories.length > 0 ? (
+              repositories.map((repo) => (
+                <ItemList
+                  key={repo.id}
+                  image={repo.owner.avatar_url}
+                  title={repo.name}
+                  fullName={repo.full_name}
+                  language={repo.language ?? 'Não especificada'}
+                  stars={repo.stargazers_count}
+                  isSelected={selectedRepositoryId === repo.id}
+                  onClick={() => setSelectedRepositoryId(repo.id)}
+                />
+              ))
+            ) : (
+              <div className={styles.empty}>
+                Digite um termo e clique em buscar para listar repositórios
+              </div>
+            )}
           </div>
 
           {repositories.length > 0 && (
@@ -69,7 +75,7 @@ function App() {
         </div>
 
         <div>
-          <h2>Detalhes</h2>
+          <h2 className={styles.titleSection}>Detalhes</h2>
 
           <div className={styles.sticky}>
             {selectedRepository ? (
