@@ -1,6 +1,7 @@
 import type { ViewDetailsProps } from './ViewDetails.types'
 import styles from './ViewDetails.module.css'
 import { Star, GitFork } from 'lucide-react'
+import { Button } from '../Button/Button'
 
 export function ViewDetails({
   image,
@@ -63,14 +64,15 @@ export function ViewDetails({
       </div>
 
       <div className={styles.buttonContainer}>
-        <a
+        <Button
+          as='a'
+          isFull
           href={repositoryUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className={styles.linkButton}
         >
           Abrir repositório
-        </a>
+        </Button>
       </div>
     </div>
   )

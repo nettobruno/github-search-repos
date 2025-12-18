@@ -67,7 +67,7 @@ function App() {
 
           {repositories.length > 0 && (
             <div className={styles.loadMore}>
-              <Button onClick={fetchMore} disabled={loading}>
+              <Button isFull onClick={fetchMore} disabled={loading}>
                 {loading ? 'Carregando...' : 'Carregar mais'}
               </Button>
             </div>
