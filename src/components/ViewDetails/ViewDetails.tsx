@@ -13,15 +13,6 @@ export function ViewDetails({
   lastUpdate,
   repositoryUrl,
 }: ViewDetailsProps) {
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString)
-      return date.toLocaleDateString('pt-BR')
-    } catch {
-      return dateString
-    }
-  }
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -43,7 +34,7 @@ export function ViewDetails({
             <Star />
           </span>
           <span className={styles.statText}>
-            {stars.toLocaleString('pt-BR') || 'Estatística'}
+            {stars.toLocaleString('pt-BR')}
           </span>
         </div>
         <div className={styles.statItem}>
@@ -51,7 +42,7 @@ export function ViewDetails({
             <GitFork />
           </span>
           <span className={styles.statText}>
-            {forks.toLocaleString('pt-BR') || 'Estatística'}
+            {forks.toLocaleString('pt-BR')}
           </span>
         </div>
       </div>
@@ -65,7 +56,9 @@ export function ViewDetails({
         </div>
         <div className={styles.infoRow}>
           <span className={styles.infoLabel}>Última atualização:</span>
-          <span className={styles.infoValue}>{formatDate(lastUpdate)}</span>
+          <span className={styles.infoValue}>
+            {new Date(lastUpdate).toLocaleDateString('pt-BR')}
+          </span>
         </div>
       </div>
 
